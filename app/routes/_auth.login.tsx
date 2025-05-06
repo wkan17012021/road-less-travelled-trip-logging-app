@@ -15,7 +15,7 @@ import { getSupabaseClient } from "~/utils/getSupabaseClient";
 export const meta: MetaFunction = () => {
   return [
     {
-      title: "Login | Remix Dashboard",
+      title: "Login | Road Less Travelled",
     },
   ];
 };
@@ -70,68 +70,133 @@ export default function LogIn() {
   const isSubmitting = navigation.state === "submitting";
 
   return (
-    <div className="w-full max-w-2xl px-8 py-10 space-y-8 bg-white shadow-md rounded-xl lg:space-y-10 lg:px-10 lg:py-12 ">
-      <div className="space-y-3">
-        <h1 className="text-2xl font-semibold text-slate-900 sm:text-3xl lg:text-4xl">
-          Log In to Remix Dashboard
-        </h1>
-        <div className="flex gap-3 p-3 rounded-md bg-cyan-50">
-          <div className="flex items-center justify-center w-5 h-5 font-serif italic text-white rounded-full bg-cyan-500">
-            i
+    <div className="flex min-h-full flex-1">
+      <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
+        <div className="mx-auto w-full max-w-sm lg:w-96">
+          <div>
+            <h2 className="mt-8 text-2xl/9 font-bold tracking-tight text-gray-900">Sign in to your account</h2>
           </div>
-          <div className="text-xs">
-            <p>
-              Email: <span className="font-medium">demo@example.com</span>
-            </p>
-            <p>
-              Password: <span className="font-medium">demo123</span>
-            </p>
+
+          <div className="mt-10">
+            <div>
+              <Form method="POST" className="space-y-6">
+                {actionData?.error && (
+                  <p className="p-3 mb-4 text-sm rounded-md bg-rose-50 text-rose-700">
+                    {actionData.error}
+                  </p>
+                )}
+                <fieldset
+                  className="w-full space-y-4 lg:space-y-6 disabled:opacity-70"
+                  disabled={isSubmitting}
+                >
+                  <TextField
+                    id="email"
+                    name="email"
+                    label="Email address"
+                    required
+                    type="email"
+                    placeholder="Email address"
+                    autoComplete="email"
+                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                  />
+                  <TextField
+                    id="password"
+                    name="password"
+                    label="Password"
+                    required
+                    type="password"
+                    placeholder="password"
+                    autoComplete="current-password"
+                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                  />
+                  <div className="flex items-center justify-between">
+                    <div className="flex gap-3">
+                      <div className="flex h-6 shrink-0 items-center">
+                        <div className="group grid size-4 grid-cols-1">
+                          <input
+                            id="remember-me"
+                            name="remember-me"
+                            type="checkbox"
+                            className="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto"
+                          />
+                          <svg
+                            fill="none"
+                            viewBox="0 0 14 14"
+                            className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
+                          >
+                            <path
+                              d="M3 8L6 11L11 3.5"
+                              strokeWidth={2}
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              className="opacity-0 group-has-checked:opacity-100"
+                            />
+                            <path
+                              d="M3 7H11"
+                              strokeWidth={2}
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              className="opacity-0 group-has-indeterminate:opacity-100"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                      <label htmlFor="remember-me" className="block text-sm/6 text-gray-900">
+                        Remember me
+                      </label>
+                    </div>
+                    <Link
+                      to="/reset-password"
+                      className="block text-sm tracking-wide underline  text-indigo-600 hover:text-indigo-500"
+                    >
+                      Forgot password?
+                    </Link>
+
+                  </div>
+
+                  <Button type="submit" className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" loading={isSubmitting}>
+                    Login
+                  </Button>
+
+                </fieldset>
+              </Form>
+
+            </div>
+
+            <div className="mt-10">
+              <div className="relative">
+                <div aria-hidden="true" className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-200" />
+                </div>
+                <div className="relative flex justify-center text-sm/6 font-medium">
+                  <span className="bg-white px-6 text-gray-900">New to RLT?{" "}</span>
+                </div>
+              </div>
+
+              <div className="mt-6">
+                <div className="mt-6">
+                  <p className="text-sm text-center">
+                    <Link className="underline text-cyan-600" to="/signup">
+                      Create an account
+                    </Link>
+                  </p>
+                </div>
+
+
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      <Form method="POST">
-        {actionData?.error && (
-          <p className="p-3 mb-4 text-sm rounded-md bg-rose-50 text-rose-700">
-            {actionData.error}
-          </p>
-        )}
-        <fieldset
-          className="w-full space-y-4 lg:space-y-6 disabled:opacity-70"
-          disabled={isSubmitting}
-        >
-          <TextField
-            id="email"
-            name="email"
-            label="Email address"
-            required
-            type="email"
-            placeholder="Email address"
-          />
-          <TextField
-            id="password"
-            name="password"
-            label="Password"
-            required
-            type="password"
-            placeholder="password"
-          />
-          <Link
-            to="/reset-password"
-            className="block text-sm tracking-wide underline text-cyan-600"
-          >
-            Forgot password?
-          </Link>
-          <Button type="submit" className="w-full" loading={isSubmitting}>
-            Login
-          </Button>
-          <p className="text-sm text-center">
-            New on Remix Dashboard?{" "}
-            <Link className="underline text-cyan-600" to="/signup">
-              Create an account
-            </Link>
-          </p>
-        </fieldset>
-      </Form>
+      <div className="relative hidden w-0 flex-1 lg:block">
+        <img
+          alt=""
+          src="https://images.unsplash.com/photo-1595472628671-4e37a2eba095?q=80&w=1452&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80&blend=4B5563&sat=-50&exp=2&blend-mode=multiply"
+          className="absolute inset-0 size-full object-cover hover:brightness-200 transition duration-500 ease-in-out"
+        />
+      </div>
+
     </div>
+
   );
 }

@@ -37,6 +37,7 @@ export default function Index() {
     <>
     <Header/>
     <Home />
+    <LogIn />
       {/* <nav className="flex justify-center w-full px-4 pt-8">
         <Logo />
       </nav>

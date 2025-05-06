@@ -96,14 +96,14 @@ const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="absolute inset-x-0 top-0 z-50">
+    <header className="absolute inset-x-0 top-0 z-50 bg-slate-200 opacity-85">
       <nav className="flex items-center justify-between p-6 lg:px-8">
         <div className="flex lg:flex-1 logo-wrapper">
           <a href="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Road Less Travelled</span>
             <img
               className="h-8 w-auto"
-              src="https://images.unsplash.com/photo-1621414154392-4eb9ee0b6f57?q=80&w=1480&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              src="/favicon.ico"
               alt=""
             />
           </a>
@@ -111,7 +111,7 @@ const Header = () => {
         <div className="flex lg:hidden">
           <button
             type="button"
-            className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-slate-700"
+            className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-slate-700 cursor-pointer"
             onClick={() => setMobileMenuOpen(true)}
           >
             <span className="sr-only">Open mobile main menu</span>
@@ -130,7 +130,7 @@ const Header = () => {
           ))}
         </div>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-            <a href="#" className="text-sm/6 font-semibold text-white">
+            <a href="#" className="text-sm/6 font-semibold text-slate-700">
               Log in <span aria-hidden="true">&rarr;</span>
             </a>
           </div>
@@ -140,20 +140,20 @@ const Header = () => {
           <DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-gray-900 px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-white/10">
             <div className="flex items-center justify-between">
               <a href="#" className="-m-1.5 p-1.5">
-                <span className="sr-only">Your Company</span>
+                <span className="sr-only">RLT Logo</span>
                 <img
                   alt=""
-                 src="https://images.unsplash.com/photo-1621414154392-4eb9ee0b6f57?q=80&w=1480&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                  className="h-8 w-auto"
+                 src="/favicon.ico"
+                  className="h-8 w-8 bg-white p-1 rounded-md"
                 />
               </a>
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(false)}
-                className="-m-2.5 rounded-md p-2.5 text-gray-400"
+                className="-m-2.5 rounded-md p-2.5 text-gray-400 cursor-pointer"
               >
                 <span className="sr-only">Close menu</span>
-                <XMarkIcon aria-hidden="true" className="size-6" />
+                <XMarkIcon aria-hidden="true" className="size-7 text-white" />
               </button>
             </div>
             <div className="mt-6 flow-root">
