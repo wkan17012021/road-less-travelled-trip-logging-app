@@ -79,7 +79,7 @@ export default function LogIn() {
 
           <div className="mt-10">
             <div>
-              <Form method="POST" className="space-y-6">
+              <Form method="POST" action="/login" className="space-y-6">
                 {actionData?.error && (
                   <p className="p-3 mb-4 text-sm rounded-md bg-rose-50 text-rose-700">
                     {actionData.error}

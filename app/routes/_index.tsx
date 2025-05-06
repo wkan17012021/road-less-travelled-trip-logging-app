@@ -27,8 +27,8 @@ export async function loader() {
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "New Remix App" },
-    { name: "description", content: "Welcome to Remix!" },
+    { title: "Road Less Travelled Web App" },
+    { name: "description", content: "A travel diary web app that allows registered users to catalogue their travel journeys." },
   ];
 };
 
