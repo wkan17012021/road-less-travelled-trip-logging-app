@@ -24,9 +24,8 @@ const NAV_ITEMS = [
     href: "/dashboard/user",
   },
   {
-    label: "Remix on Netlify",
-    href: "https://docs.netlify.com/frameworks/remix/",
-    newTab: true,
+    label: "Trips",
+    href: "/dashboard/trips",
   },
 ];
 
