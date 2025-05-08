@@ -45,7 +45,7 @@ export default function Sidebar({ isOpen, setIsOpen }: Props) {
         <div className="flex items-center justify-between gap-4">
           <Logo />
           <button
-            className="flex items-center justify-center w-8 h-8 transition rounded-md cursor-pointer md:hidden text-slate-900 hover:bg-slate-100"
+            className="flex items-center justify-center w-8 h-8 transition rounded-md cursor-pointer md:hidden text-slate-900 hover:bg-slate-500"
             onClick={() => setIsOpen(false)}
           >
             <CloseIcon />
