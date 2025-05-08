@@ -1,7 +1,7 @@
 import type { MetaFunction } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import Home from "~/routes/home";
-import Logo from "~/components/Logo";
+
 import LogIn from "~/routes/_auth.login";
 import Header from "~/components/Header";
 import Footer from "~/components/Footer";
