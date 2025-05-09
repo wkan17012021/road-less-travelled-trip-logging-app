@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Dialog, DialogPanel } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
+import Logo from "./Logo";
 
 import {
   ArrowPathIcon,
@@ -13,7 +14,7 @@ import {
 } from '@heroicons/react/20/solid'
 
 const navigation = [
-  { name: "About", href: "#" },
+  { name: "About", href: "/about" },
   { name: "Features", href: "#" },
   { name: "Testimonials", href: "#" },
   { name: "Terms and Privacy", href: "#" },
@@ -98,11 +99,7 @@ const Header = () => {
         <div className="flex lg:flex-1 logo-wrapper">
           <a href="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Road Less Travelled</span>
-            <img
-              className="h-8 w-auto"
-              src="/favicon.ico"
-              alt=""
-            />
+           <Logo />
           </a>
         </div>
         <div className="flex lg:hidden">
