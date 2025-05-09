@@ -1,6 +1,5 @@
 import { Form, useActionData, useNavigation } from "@remix-run/react";
 import { useRef, useState, useEffect } from "react";
-import { useActionData } from "@remix-run/react";
 import { ArrowUpOnSquareIcon, CloudArrowUpIcon } from '@heroicons/react/20/solid'
 
 const ImageUploader = () => {
@@ -21,13 +20,6 @@ const ImageUploader = () => {
         setFileSelectedMessage(null);
       }
 
-  };
-
-  const handleReset = () => {
-    setSelectedFile(null);
-    if (inputRef.current) {
-      inputRef.current.value = ""; // Clear the file input
-    }
   };
 
     // Clear file input after successful upload

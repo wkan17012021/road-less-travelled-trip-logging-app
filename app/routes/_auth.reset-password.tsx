@@ -18,7 +18,7 @@ export default function ResetPassword() {
       <h1 className="text-2xl font-semibold text-slate-900 sm:text-3xl lg:text-4xl">
         Forgot your password?
       </h1>
-      <Form method="POST" className="w-full space-y-4 lg:space-y-6">
+      <Form method="POST" className="space-y-4 lg:space-y-6">
         <TextField
           id="email"
           name="email"
@@ -26,10 +26,11 @@ export default function ResetPassword() {
           required
           type="email"
           placeholder="Email address"
+          
         />
-        <Button type="submit" className="w-full">
-          Reset Password
-        </Button>
+        <Button type="submit" className="flex justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" >
+                    Reset Password
+                  </Button>
       </Form>
     </div>
   );

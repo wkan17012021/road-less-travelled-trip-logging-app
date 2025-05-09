@@ -2,11 +2,11 @@ import type { ActionFunction, LoaderFunctionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
-import { ImageUploader } from "~/components/ImageUploader";
-import { sanitizeFilename } from "~/utils/sanitizeFilename";
+import { ImageUploader } from "../components/ImageUploader";
+import { sanitizeFilename } from "../utils/sanitizeFilename";
 
-import { getSession } from "~/session.server";
-import { getSupabaseClient } from "~/utils/getSupabaseClient";
+import { getSession } from "../session.server";
+import { getSupabaseClient } from "../utils/getSupabaseClient";
 
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -76,7 +76,6 @@ export const action: ActionFunction = async ({ request }) => {
 export default function Gallery() {
   return (
     <>
-    
       <h1 className="text-2xl font-bold mb-2">Upload an Image</h1>
       <ImageUploader />
     </>
