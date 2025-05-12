@@ -48,7 +48,7 @@ const team = [
     name: 'Chris Columbus',
     role: 'Co-Founder & CEO',
     imageUrl:
-      'https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80',
+      'https://images.unsplash.com/photo-1633210153148-be1c64c030a6?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80',
   },
   {
     name: 'Charlie Darwin',
@@ -69,10 +69,10 @@ const team = [
       'https://images.unsplash.com/photo-1577976085628-ea1297582be9?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80',
   },
   {
-    name: 'Fred Magellan',
+    name: 'Frederica Magellan',
     role: 'Lead Frontend Engineer',
     imageUrl:
-      'https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80',
+      'https://images.unsplash.com/photo-1563245132-43ac8e6b73e1?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80',
   },
   {
     name: 'Mark Polo',
