@@ -1,7 +1,5 @@
 import type { ActionFunction, LoaderFunctionArgs } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
-import { json } from "@remix-run/node";
-import { Outlet } from "@remix-run/react";
+import { redirect, json } from "@remix-run/node";
 import { ImageUploader } from "../components/ImageUploader";
 import { sanitizeFilename } from "../utils/sanitizeFilename";
 

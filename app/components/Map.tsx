@@ -1,5 +1,5 @@
 // app/components/Map.tsx
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 let MapContainer: any;
 let TileLayer: any;
@@ -21,8 +21,8 @@ export default function Map() {
                     L = leaflet;
                     delete (L.Icon.Default.prototype as any)._getIconUrl;
                     L.Icon.Default.mergeOptions({
-                        iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-                        iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+                        iconRetinaUrl: '../public/icon-flag.png',
+                        iconUrl: '../public/icon-flag.png',
                         shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
                     });
                 }),
@@ -59,7 +59,9 @@ export default function Map() {
 
         return position === null ? null : (
             <Marker position={position}>
-                <Popup>You are here</Popup>
+                <Popup >Your current location
+                
+                </Popup>
             </Marker>
         );
     };
