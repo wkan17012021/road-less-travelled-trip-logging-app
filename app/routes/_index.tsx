@@ -1,9 +1,11 @@
 import type { MetaFunction } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
-import Home from "~/routes/home";
+import dynamic from 'react';
 
 import LogIn from "~/routes/_auth.login";
 import Header from "~/components/Header";
+import Hero from "~/components/Hero";
+import Testimonials from "~/components/Testimonials";
 import Footer from "~/components/Footer";
 import { getSupabaseClient } from "~/utils/getSupabaseClient";
 
@@ -35,16 +37,13 @@ export const meta: MetaFunction = () => {
 export default function Index() {
   return (
     <>
-    <Header/>
-    <Home />
-    <LogIn />
-      {/* <nav className="flex justify-center w-full px-4 pt-8">
-        <Logo />
-      </nav>
-      <main className="grow">
-        <LogIn />
-      </main> */}
-            <Footer />
+      <Header />
+      <Hero />
+
+      <LogIn />
+      <Testimonials />
+
+      <Footer />
     </>
   );
 }
