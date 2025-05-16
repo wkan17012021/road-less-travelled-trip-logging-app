@@ -8,6 +8,7 @@ import { sanitizeFilename } from "../utils/sanitizeFilename";
 import { getSession } from "../session.server";
 import { getSupabaseClient } from "../utils/getSupabaseClient";
 import Map from "~/components/Map";
+import Banner from "~/components/Banner";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const session = await getSession(request.headers.get("Cookie"));
@@ -76,11 +77,10 @@ export const action: ActionFunction = async ({ request }) => {
 export default function Gallery() {
   return (
     <>
+    <Banner/>
       <h1 className="text-2xl font-bold mb-2">Upload an Image</h1>
       <ImageUploader />
-      
         <Map />
-      
     </>
   );
 }
