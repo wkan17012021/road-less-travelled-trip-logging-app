@@ -42,8 +42,40 @@ export async function action({ request }: ActionFunctionArgs) {
     return Response.json({ error: error.message }, { status: 400 });
   }
 
+  const userResponse = await supabase.auth.getUser(data.session.access_token);
+  if (userResponse.error || !userResponse.data.user) {
+    return Response.json({ error: "Failed to fetch user details." }, { status: 500 });
+  }
+
+  console.log("User ID retrieved from Supabase:", userResponse.data.user.id);
+
   const session = await getSession(request.headers.get("Cookie"));
   session.set("__session", data.session.access_token);
+  session.set("user_id", userResponse.data.user.id);
+
+  // Ensure the user exists in the members table
+  const { data: existingMember, error: memberError } = await supabase
+    .from("members")
+    .select("id")
+    .eq("id", userResponse.data.user.id)
+    .single();
+
+  if (memberError || !existingMember) {
+    const { error: insertError } = await supabase
+      .from("members")
+      .insert({
+        id: userResponse.data.user.id,
+        name: userResponse.data.user.email, // Use email as a placeholder for name
+        email: userResponse.data.user.email,
+        location: "Unknown", // Default location
+        avatar_url: "/user.jpg", // Default placeholder image
+      });
+
+    if (insertError) {
+      console.error("Error inserting user into members table:", insertError);
+      return Response.json({ error: "Failed to create user in members table." }, { status: 500 });
+    }
+  }
 
   return redirect("/dashboard", {
     headers: {

@@ -1,5 +1,18 @@
 // app/components/Map.tsx
 import { useEffect, useState } from 'react';
+import type { FC } from 'react';
+
+interface Trip {
+    id: string;
+    title: string;
+    latitude: number;
+    longitude: number;
+}
+
+interface MapProps {
+    trips: Trip[];
+    onLocationFound: (lat: number, lng: number) => void;
+}
 
 let MapContainer: any;
 let TileLayer: any;
@@ -8,7 +21,28 @@ let Popup: any;
 let useMapEvents: any;
 let L: any;
 
-export default function Map() {
+const LocationMarker = ({ onLocationFound }: { onLocationFound: (lat: number, lng: number) => void }) => {
+    const [position, setPosition] = useState<any>(null);
+
+    const map = useMapEvents({
+        click() {
+            map.locate();
+        },
+        locationfound(e) {
+            setPosition(e.latlng);
+            map.flyTo(e.latlng, map.getZoom());
+            onLocationFound(e.latlng.lat, e.latlng.lng);
+        },
+    });
+
+    return position === null ? null : (
+        <Marker position={position}>
+            <Popup>Your current location.</Popup>
+        </Marker>
+    );
+};
+
+const Map: FC<MapProps> = ({ trips, onLocationFound }) => {
     const [isClient, setIsClient] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false);
 
@@ -21,8 +55,8 @@ export default function Map() {
                     L = leaflet;
                     delete (L.Icon.Default.prototype as any)._getIconUrl;
                     L.Icon.Default.mergeOptions({
-                        iconRetinaUrl: '../public/icon-flag.png',
-                        iconUrl: '../public/icon-flag.png',
+                        iconRetinaUrl: '/icon-flag.png',
+                        iconUrl: '/icon-flag.png',
                         shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
                     });
                 }),
@@ -41,41 +75,29 @@ export default function Map() {
         return <div>Loading map...</div>;
     }
 
-
-     // London
-
-    const LocationMarker = () => {
-        const [position, setPosition] = useState<any>(null);
-
-        const map = useMapEvents({
-            click() {
-              map.locate()
-            },
-            locationfound(e) {
-              setPosition(e.latlng)
-              map.flyTo(e.latlng, map.getZoom())
-            },
-          })
-
-        return position === null ? null : (
-            <Marker position={position}>
-                <Popup >Your current location
-                
-                </Popup>
-            </Marker>
-        );
-    };
-
-
     return (
         <div className="w-full h-[80vh] py-4">
-            <MapContainer  center={{ lat: 51.505, lng: -0.09 }} zoom={13} scrollWheelZoom={true} style={{ height: '100%', width: '100%' }}>
+            <MapContainer
+                center={{ lat: 51.505, lng: -0.09 }}
+                zoom={13}
+                scrollWheelZoom={true}
+                style={{ height: '100%', width: '100%' }}
+            >
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                <LocationMarker />
+                {trips.map((trip) => (
+                    <Marker key={trip.id} position={[trip.latitude, trip.longitude]}>
+                        <Popup>
+                            <strong>{trip.title}</strong>
+                        </Popup>
+                    </Marker>
+                ))}
+                <LocationMarker onLocationFound={onLocationFound} />
             </MapContainer>
         </div>
     );
-}
+};
+
+export default Map;
