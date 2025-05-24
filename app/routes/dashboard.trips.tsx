@@ -2,7 +2,7 @@ import type { ActionFunction, LoaderFunctionArgs } from "@remix-run/node";
 import { redirect, json, unstable_parseMultipartFormData, UploadHandler } from "@remix-run/node";
 import { ImageUploader } from "../components/ImageUploader";
 import { useFetcher, useLoaderData, useRouteError, isRouteErrorResponse } from "@remix-run/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { getSession } from "../session.server";
 import { getSupabaseClient } from "../utils/getSupabaseClient";
@@ -215,6 +215,21 @@ export default function Gallery() {
     console.log("Submitting form data:", Object.fromEntries(data));
     fetcher.submit(data, { method: "post", encType: "multipart/form-data" });
   };
+
+  // Clear form fields after successful upload
+  useEffect(() => {
+    if (fetcher.data && typeof fetcher.data === "object" && "message" in fetcher.data) {
+      setFormData({
+        title: "",
+        image: null,
+        caption: "",
+        description: "",
+        latitude: null,
+        longitude: null,
+      });
+      setErrorMessage("");
+    }
+  }, [fetcher.data]);
 
   return (
     <>

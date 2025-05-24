@@ -7,6 +7,9 @@ interface Trip {
     title: string;
     latitude: number;
     longitude: number;
+    image_url?: string;
+    caption?: string;
+    description?: string;
 }
 
 interface MapProps {
@@ -90,7 +93,18 @@ const Map: FC<MapProps> = ({ trips, onLocationFound }) => {
                 {trips.map((trip) => (
                     <Marker key={trip.id} position={[trip.latitude, trip.longitude]}>
                         <Popup>
-                            <strong>{trip.title}</strong>
+                            <div style={{ maxWidth: 220 }}>
+                                {trip.image_url && (
+                                    <img
+                                        src={trip.image_url}
+                                        alt={trip.title}
+                                        style={{ maxWidth: "200px", maxHeight: "150px", marginBottom: 8 }}
+                                    />
+                                )}
+                                <strong>{trip.title}</strong>
+                                {trip.caption && <div><em>{trip.caption}</em></div>}
+                                {trip.description && <div>{trip.description}</div>}
+                            </div>
                         </Popup>
                     </Marker>
                 ))}

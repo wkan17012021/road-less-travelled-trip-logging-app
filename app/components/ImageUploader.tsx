@@ -1,6 +1,6 @@
-import { Form, useActionData, useNavigation } from "@remix-run/react";
+import { useActionData, useNavigation } from "@remix-run/react";
 import { useRef, useState, useEffect } from "react";
-import { ArrowUpOnSquareIcon, CloudArrowUpIcon } from '@heroicons/react/20/solid'
+import { ArrowUpOnSquareIcon } from '@heroicons/react/20/solid'
 import exifr from "exifr";
 
 const ImageUploader = ({ onLocationExtracted, onFileSelected }: { onLocationExtracted: (lat: number, lng: number) => void; onFileSelected: (file: File) => void }) => {
@@ -61,45 +61,29 @@ const ImageUploader = ({ onLocationExtracted, onFileSelected }: { onLocationExtr
 
   return (
     <>
-      <Form
-        method="post"
-        encType="multipart/form-data"
-        className="flex gap-4"
-
+      <input
+        type="file"
+        name="image"
+        ref={inputRef}
+        accept="image/*"
+        style={{ display: "none" }}
+        onChange={handleFileChange}
+      />
+      <button
+        type="button"
+        onClick={() => inputRef.current?.click()}
+        className="inline-flex items-center gap-x-2 rounded-md cursor-pointer bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
       >
-        <input
-          type="file"
-          name="image"
-          ref={inputRef}
-          accept="image/*"
-          style={{ display: "none" }}
-          onChange={handleFileChange}
-        />
-        <button
-          type="button"
-          onClick={() => inputRef.current?.click()}
-          className="inline-flex items-center gap-x-2 rounded-md cursor-pointer bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-        >
-          Select Image
-          <ArrowUpOnSquareIcon aria-hidden="true" className="-mr-0.5 size-5" />
-        </button>
-
-        <button
-          type="submit"
-          className="inline-flex items-center gap-x-2 rounded-md cursor-pointer bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          disabled={isSubmitting || !selectedFile}
-        >
-          {isSubmitting ? "Uploading..." : "Upload Image"}
-          <CloudArrowUpIcon aria-hidden="true" className="-mr-0.5 size-5" />
-        </button>
-        {fileSelectedMessage && <p className="text-blue-500">{fileSelectedMessage}</p>}
-        {actionData?.error && <p className="text-red-500">{actionData.error}</p>}
-        {actionData?.message && (
-          <p className="text-green-500">
-            {actionData.message}: {actionData.path}
-          </p>
-        )}
-      </Form>
+        Select Image
+        <ArrowUpOnSquareIcon aria-hidden="true" className="-mr-0.5 size-5" />
+      </button>
+      {fileSelectedMessage && <p className="text-blue-500">{fileSelectedMessage}</p>}
+      {actionData?.error && <p className="text-red-500">{actionData.error}</p>}
+      {actionData?.message && (
+        <p className="text-green-500">
+          {actionData.message}: {actionData.path}
+        </p>
+      )}
     </>
   );
 };
