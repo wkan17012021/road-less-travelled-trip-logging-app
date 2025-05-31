@@ -1,7 +1,17 @@
 import type { ActionFunction, LoaderFunctionArgs } from "@remix-run/node";
-import { redirect, json, unstable_parseMultipartFormData, UploadHandler } from "@remix-run/node";
+import {
+  redirect,
+  json,
+  unstable_parseMultipartFormData,
+  UploadHandler,
+} from "@remix-run/node";
 import { ImageUploader } from "../components/ImageUploader";
-import { useFetcher, useLoaderData, useRouteError, isRouteErrorResponse } from "@remix-run/react";
+import {
+  useFetcher,
+  useLoaderData,
+  useRouteError,
+  isRouteErrorResponse,
+} from "@remix-run/react";
 import { useState, useEffect } from "react";
 
 import { getSession } from "../session.server";
@@ -80,13 +90,14 @@ export const action: ActionFunction = async ({ request }) => {
       }
       const buffer = Buffer.concat(chunks);
       const filePath = `${userId}/${Date.now()}-${safeFilename}`;
-      const contentType = mime.getType(safeFilename) || "application/octet-stream";
+      const contentType =
+        mime.getType(safeFilename) || "application/octet-stream";
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from("images")
         .upload(filePath, buffer, {
           cacheControl: "3600",
           upsert: false,
-          contentType
+          contentType,
         });
       if (uploadError) {
         throw new Error(uploadError.message);
@@ -102,7 +113,10 @@ export const action: ActionFunction = async ({ request }) => {
     return textDecoder.decode(Buffer.concat(chunks));
   };
 
-  const formData = await unstable_parseMultipartFormData(request, uploadHandler);
+  const formData = await unstable_parseMultipartFormData(
+    request,
+    uploadHandler
+  );
 
   const title = formData.get("title");
   const imagePath = formData.get("image");
@@ -111,7 +125,14 @@ export const action: ActionFunction = async ({ request }) => {
   const latitude = formData.get("latitude");
   const longitude = formData.get("longitude");
 
-  console.log("Form data received:", { title, imagePath, caption, description, latitude, longitude });
+  console.log("Form data received:", {
+    title,
+    imagePath,
+    caption,
+    description,
+    latitude,
+    longitude,
+  });
 
   if (
     !title ||
@@ -127,12 +148,16 @@ export const action: ActionFunction = async ({ request }) => {
 
   // Get public URL for the uploaded image
   const imageUrl = imagePath
-    ? supabase.storage.from("images").getPublicUrl(imagePath as string).data.publicUrl
+    ? supabase.storage.from("images").getPublicUrl(imagePath as string).data
+      .publicUrl
     : null;
 
   if (!imageUrl) {
     console.log("Error: Failed to generate public URL for image");
-    return json({ error: "Failed to generate public URL for image" }, { status: 500 });
+    return json(
+      { error: "Failed to generate public URL for image" },
+      { status: 500 }
+    );
   }
 
   // Insert trip data into the trips table
@@ -185,16 +210,28 @@ export default function Gallery() {
     setFormData((prev) => ({ ...prev, latitude: lat, longitude: lng }));
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleUpload = () => {
     // Validate that all required fields are filled
-    const { title, image, caption, description, latitude, longitude } = formData;
-    if (!title || !image || !caption || !description || latitude === null || longitude === null) {
-      setErrorMessage("Please fill out all fields and ensure geolocation data is available before uploading.");
+    const { title, image, caption, description, latitude, longitude } =
+      formData;
+    if (
+      !title ||
+      !image ||
+      !caption ||
+      !description ||
+      latitude === null ||
+      longitude === null
+    ) {
+      setErrorMessage(
+        "Please fill out all fields and ensure geolocation data is available before uploading."
+      );
       console.log("Form data validation failed:", formData);
       return;
     }
@@ -218,7 +255,11 @@ export default function Gallery() {
 
   // Clear form fields after successful upload
   useEffect(() => {
-    if (fetcher.data && typeof fetcher.data === "object" && "message" in fetcher.data) {
+    if (
+      fetcher.data &&
+      typeof fetcher.data === "object" &&
+      "message" in fetcher.data
+    ) {
       setFormData({
         title: "",
         image: null,
@@ -234,45 +275,88 @@ export default function Gallery() {
   return (
     <>
       <Banner />
-      <h1 className="text-2xl font-bold mb-2">Upload an Image</h1>
-      <div className="space-y-4">
-        <input
-          type="text"
-          name="title"
-          placeholder="Title"
-          value={formData.title}
-          onChange={handleChange}
-          required
-        />
-        <ImageUploader
-          onLocationExtracted={handleLocationExtracted}
-          onFileSelected={handleFileChange}
-        />
-        <input
-          type="text"
-          name="caption"
-          placeholder="Caption"
-          value={formData.caption}
-          onChange={handleChange}
-          required
-        />
-        <textarea
-          name="description"
-          placeholder="Description"
-          value={formData.description}
-          onChange={handleChange}
-          required
-        />
-        {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+      <h1 className="text-2xl font-bold mb-4">
+        Upload an Image for a trip location
+      </h1>
+      <ImageUploader
+        onLocationExtracted={handleLocationExtracted}
+        onFileSelected={handleFileChange}
+      />
+      <div className="grid grid-cols-1 gap-x-8 gap-y-6 my-4 sm:grid-cols-2 ">
+        <div>
+          <label
+            htmlFor="first-name"
+            className="block text-sm/6 font-semibold text-gray-900"
+          >
+            Image Title
+          </label>
+          <div className="mt-2.5">
+            <input
+              type="text"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              required
+              placeholder="Rotterdam (Or Anywhere)"
+              className="block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
+            />
+          </div>
+        </div>
+        <div>
+          <label
+            htmlFor="last-name"
+            className="block text-sm/6 font-semibold text-gray-900"
+          >
+            Image Caption
+          </label>
+          <div className="mt-2.5">
+            <input
+              type="text"
+              name="caption"
+              placeholder="Describe the image - this will be used to set the alt text for screen readers"
+              value={formData.caption}
+              onChange={handleChange}
+              required
+              className="block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
+            />
+          </div>
+        </div>
+
+        <div className="sm:col-span-2">
+          <label
+            htmlFor="message"
+            className="block text-sm/6 font-semibold text-gray-900"
+          >
+            Description of this location
+          </label>
+          <div className="mt-2.5">
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              required
+              rows={2}
+              className="block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
+              defaultValue={""}
+            />
+          </div>
+        </div>
+      </div>
+      <div className="my-8">
         <button
-          type="button"
           onClick={handleUpload}
-          className="btn btn-primary"
+          type="submit"
+          className="block w-full rounded-md cursor-pointer bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
-          Upload Image
+          Upload Trip Details
         </button>
       </div>
-      <Map trips={trips} onLocationFound={handleLocationExtracted} token={token} /> {/* <-- pass token */}
+      {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+      <Map
+        trips={trips}
+        onLocationFound={handleLocationExtracted}
+        token={token}
+      />{" "}
     </>
   );
 }
