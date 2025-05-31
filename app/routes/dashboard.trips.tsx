@@ -27,7 +27,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     throw new Response(error.message, { status: 500 });
   }
 
-  return json({ trips });
+  return json({ trips, token }); // <-- include token
 }
 
 export const action: ActionFunction = async ({ request }) => {
@@ -156,7 +156,7 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function Gallery() {
-  const { trips } = useLoaderData<{ trips: any[] }>();
+  const { trips, token } = useLoaderData<{ trips: any[]; token: string }>(); // <-- get token
   const fetcher = useFetcher();
   const [formData, setFormData] = useState<{
     title: string;
@@ -235,7 +235,6 @@ export default function Gallery() {
     <>
       <Banner />
       <h1 className="text-2xl font-bold mb-2">Upload an Image</h1>
-
       <div className="space-y-4">
         <input
           type="text"
@@ -273,8 +272,7 @@ export default function Gallery() {
           Upload Image
         </button>
       </div>
-
-      <Map trips={trips} onLocationFound={handleLocationExtracted} />
+      <Map trips={trips} onLocationFound={handleLocationExtracted} token={token} /> {/* <-- pass token */}
     </>
   );
 }
