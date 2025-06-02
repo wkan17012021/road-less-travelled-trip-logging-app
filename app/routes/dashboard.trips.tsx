@@ -22,10 +22,15 @@ import { sanitizeFilename } from "../utils/sanitizeFilename";
 import mime from "mime";
 
 export async function loader({ request }: LoaderFunctionArgs) {
+  console.log("[SERVER] Entered loader for /dashboard.trips");
   const session = await getSession(request.headers.get("Cookie"));
   const token = session.get("__session");
+  console.log("[SERVER] Loader session token:", token);
 
-  if (!token) return redirect("/login");
+  if (!token) {
+    console.log("[SERVER] Loader: No token, redirecting to /login");
+    return redirect("/login");
+  }
 
   const supabase = getSupabaseClient(token);
   const { data: trips, error } = await supabase
@@ -34,20 +39,22 @@ export async function loader({ request }: LoaderFunctionArgs) {
     .eq("user_id", session.get("user_id"));
 
   if (error) {
+    console.log("[SERVER] Loader: Supabase error:", error);
     throw new Response(error.message, { status: 500 });
   }
 
+  console.log("[SERVER] Loader: Returning trips and token");
   return json({ trips, token }); // <-- include token
 }
 
 export const action: ActionFunction = async ({ request }) => {
+  console.log("[SERVER] Entered action for /dashboard.trips");
   const session = await getSession(request.headers.get("Cookie"));
   const token = session.get("__session");
-
-  console.log("Session token:", token);
+  console.log("[SERVER] Action session token:", token);
 
   if (!token) {
-    console.log("Error: Not authenticated");
+    console.log("[SERVER] Action: Not authenticated");
     return json({ error: "Not authenticated" }, { status: 401 });
   }
 
@@ -55,10 +62,10 @@ export const action: ActionFunction = async ({ request }) => {
 
   // Fetch user_id from session
   const userId = session.get("user_id");
-  console.log("Session user_id:", userId);
+  console.log("[SERVER] Action session user_id:", userId);
 
   if (!userId) {
-    console.log("Error: User ID not found in session");
+    console.log("[SERVER] Action: User ID not found in session");
     return json({ error: "User ID not found in session" }, { status: 401 });
   }
 
@@ -70,12 +77,12 @@ export const action: ActionFunction = async ({ request }) => {
     .maybeSingle();
 
   if (memberError) {
-    console.error("Supabase query error:", memberError);
+    console.error("[SERVER] Action: Supabase query error:", memberError);
     return json({ error: "Database query error" }, { status: 500 });
   }
 
   if (!member) {
-    console.log("Error: User not found in members table");
+    console.log("[SERVER] Action: User not found in members table");
     return json({ error: "User not found in members table" }, { status: 404 });
   }
 
@@ -176,11 +183,12 @@ export const action: ActionFunction = async ({ request }) => {
     return json({ error: "Failed to add trip" }, { status: 500 });
   }
 
-  console.log("Trip added successfully");
+  console.log("[SERVER] Action: Trip added successfully");
   return json({ message: "Trip added successfully", path: imagePath });
 };
 
 export default function Gallery() {
+  console.log("[CLIENT] Gallery component mounted");
   const { trips, token } = useLoaderData<{ trips: any[]; token: string }>(); // <-- get token
   const fetcher = useFetcher();
   const [formData, setFormData] = useState<{
