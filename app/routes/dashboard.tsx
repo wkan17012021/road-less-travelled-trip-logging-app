@@ -1,6 +1,6 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
-import { Outlet } from "@remix-run/react";
+import { Outlet, useLoaderData } from "@remix-run/react";
 import { useState } from "react";
 
 import MenuIcon from "~/components/icons/Menu";
@@ -18,15 +18,28 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const session = await getSession(request.headers.get("Cookie"));
   const token = session.get("__session");
+  const userId = session.get("user_id");
 
-  if (!token) {
+  if (!token || !userId) {
     return redirect("/login");
   }
 
-  return Response.json({});
+  const supabase = getSupabaseClient(token);
+  const { data: user, error } = await supabase
+    .from("members")
+    .select("id, name, email, avatar_url")
+    .eq("id", userId)
+    .maybeSingle();
+
+  if (error || !user) {
+    return redirect("/login");
+  }
+
+  return Response.json({ user });
 }
 
 export default function Dashboard() {
+  const { user } = useLoaderData<{ user: { id: string; name: string; email: string; avatar_url?: string } }>();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
@@ -38,7 +51,7 @@ export default function Dashboard() {
         >
           <MenuIcon />
         </button>
-        <ProfilePopup />
+        <ProfilePopup user={user} />
       </nav>
       <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
       <main className="py-8 grow md:ml-70 md:py-16">
