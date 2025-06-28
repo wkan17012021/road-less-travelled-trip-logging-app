@@ -21,14 +21,30 @@ import Banner from "~/components/Banner";
 import { sanitizeFilename } from "../utils/sanitizeFilename";
 import mime from "mime";
 
+interface Trip {
+  id: string;
+  user_id: string;
+  title: string;
+  image_url: string | null;
+  caption: string | null;
+  description: string | null;
+  latitude: number;
+  longitude: number;
+  created_at: string;
+}
+
+// Type for loader data
+type LoaderData = {
+  trips: Trip[];
+  token: string;
+};
+
 export async function loader({ request }: LoaderFunctionArgs) {
-  console.log("[SERVER] Entered loader for /dashboard.trips");
   const session = await getSession(request.headers.get("Cookie"));
   const token = session.get("__session");
-  console.log("[SERVER] Loader session token:", token);
+  const userId = session.get("user_id");
 
   if (!token) {
-    console.log("[SERVER] Loader: No token, redirecting to /login");
     return redirect("/login");
   }
 
@@ -36,15 +52,32 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const { data: trips, error } = await supabase
     .from("trips")
     .select("*")
-    .eq("user_id", session.get("user_id"));
+    .eq("user_id", userId);
 
   if (error) {
-    console.log("[SERVER] Loader: Supabase error:", error);
     throw new Response(error.message, { status: 500 });
   }
 
-  console.log("[SERVER] Loader: Returning trips and token");
-  return json({ trips, token }); // <-- include token
+  // Generate signed URLs for each trip image
+  const signedTrips = await Promise.all(
+    (trips ?? []).map(async (trip) => {
+      if (trip.image_url) {
+        // Remove any base URL or '/images/' prefix if present
+        let imagePath = trip.image_url;
+        if (imagePath.startsWith('http')) {
+          const match = imagePath.match(/\/images\/(.+)$/);
+          if (match) imagePath = match[1];
+        }
+        const { data } = await supabase.storage
+          .from("images")
+          .createSignedUrl(imagePath, 60 * 60); // 1 hour expiry
+        return { ...trip, image_url: data?.signedUrl || null };
+      }
+      return trip;
+    })
+  );
+
+  return json({ trips: signedTrips });
 }
 
 export const action: ActionFunction = async ({ request }) => {
@@ -189,7 +222,7 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function Gallery() {
   console.log("[CLIENT] Gallery component mounted");
-  const { trips, token } = useLoaderData<{ trips: any[]; token: string }>(); // <-- get token
+  const { trips, token } = useLoaderData<LoaderData>();
   const fetcher = useFetcher();
   const [formData, setFormData] = useState<{
     title: string;
@@ -362,8 +395,7 @@ export default function Gallery() {
       <Map
         trips={trips}
         onLocationFound={handleLocationExtracted}
-        token={token}
-      />{" "}
+      />
     </>
   );
 }

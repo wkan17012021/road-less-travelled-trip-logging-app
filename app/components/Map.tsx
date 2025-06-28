@@ -1,7 +1,8 @@
 // app/components/Map.tsx
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import type { FC } from 'react';
-import { createClient } from "@supabase/supabase-js";
+import { supabaseBrowser } from "~/utils/getSupabaseBrowserClient";
+import type { LatLngExpression } from 'leaflet';
 
 interface Trip {
     id: string;
@@ -16,7 +17,6 @@ interface Trip {
 interface MapProps {
     trips: Trip[];
     onLocationFound: (lat: number, lng: number) => void;
-    token: string; // <-- Add token prop
 }
 
 let MapContainer: any;
@@ -47,17 +47,9 @@ const LocationMarker = ({ onLocationFound }: { onLocationFound: (lat: number, ln
     );
 };
 
-const Map: FC<MapProps> = ({ trips, onLocationFound, token }) => {
+const Map: FC<MapProps> = ({ trips, onLocationFound }) => {
     const [isClient, setIsClient] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false);
-    const [signedUrls, setSignedUrls] = useState<{ [tripId: string]: string }>({});
-
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL!;
-    const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY!;
-    // Create an authenticated Supabase client with the token
-    const supabase = useMemo(() => createClient(supabaseUrl, supabaseAnonKey, {
-        global: { headers: { Authorization: `Bearer ${token}` } }
-    }), [token]);
 
     useEffect(() => {
         setIsClient(true);
@@ -84,36 +76,6 @@ const Map: FC<MapProps> = ({ trips, onLocationFound, token }) => {
         }
     }, []);
 
-    // Fetch signed URLs for all trips with image_url
-    useEffect(() => {
-        async function fetchSignedUrls() {
-            const urls: { [tripId: string]: string } = {};
-            await Promise.all(trips.map(async (trip) => {
-                if (trip.image_url) {
-                    let imagePath = trip.image_url;
-                    if (imagePath?.startsWith('http')) {
-                        const idx = imagePath.indexOf('/images/');
-                        if (idx !== -1) {
-                            imagePath = imagePath.substring(idx + '/images/'.length);
-                        }
-                    }
-                    console.log('Downloading from storage path:', imagePath); // DEBUG
-                    const { data, error } = await supabase.storage.from("images").download(imagePath); // use authenticated client
-                    if (data && !error) {
-                        const blobUrl = URL.createObjectURL(data);
-                        urls[trip.id] = blobUrl;
-                    } else {
-                        console.error('Supabase download error:', error, 'for path:', imagePath);
-                    }
-                }
-            }));
-            setSignedUrls(urls);
-        }
-        if (isLoaded && trips.length > 0) {
-            fetchSignedUrls();
-        }
-    }, [isLoaded, trips, supabase]);
-
     if (!isClient || !isLoaded) {
         return <div>Loading map...</div>;
     }
@@ -130,24 +92,33 @@ const Map: FC<MapProps> = ({ trips, onLocationFound, token }) => {
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                {trips.map((trip) => (
-                    <Marker key={trip.id} position={[trip.latitude, trip.longitude]}>
-                        <Popup>
-                            <div style={{ maxWidth: 220 }}>
-                                {trip.image_url && signedUrls[trip.id] && (
-                                    <img
-                                        src={signedUrls[trip.id]}
-                                        alt={trip.title}
-                                        style={{ maxWidth: "200px", maxHeight: "150px", marginBottom: 8 }}
-                                    />
-                                )}
-                                <strong>{trip.title}</strong>
-                                {trip.caption && <div><em>{trip.caption}</em></div>}
-                                {trip.description && <div>{trip.description}</div>}
-                            </div>
-                        </Popup>
-                    </Marker>
-                ))}
+                {trips.map((trip) => {
+                    if (
+                        typeof trip.latitude === 'number' &&
+                        typeof trip.longitude === 'number' &&
+                        !isNaN(trip.latitude) &&
+                        !isNaN(trip.longitude)
+                    ) {
+                        return (
+                            <Marker key={trip.id} position={[trip.latitude, trip.longitude]}>
+                                <Popup style={{ maxWidth: '200px' }}>
+                                    <div>
+                                        {trip.image_url && (
+                                            <img
+                                                src={trip.image_url}
+                                                alt={trip.title}
+                                                className='block mb-4 rounded-md max-w-full h-auto'
+                                            />
+                                        )}
+                                        {trip.caption && <em className='font-medium text-base'>{trip.caption}</em>}
+                                    </div>
+                                    {trip.description && <p className='mt-4 mb-2 text-base'>{trip.description}</p>}
+                                </Popup>
+                            </Marker>
+                        );
+                    }
+                    return null;
+                })}
                 <LocationMarker onLocationFound={onLocationFound} />
             </MapContainer>
         </div>
